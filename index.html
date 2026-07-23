@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ROI Calculator — Return on Investment | Tabutility</title>
-  <meta name="description" content="Calculate return on investment (ROI), annualised return, and profit/loss for any investment. Simple and detailed ROI analysis." />
-  <meta name="keywords" content="roi calculator, return on investment, investment return, annualised return, profit calculator" />
-  <link rel="canonical" href="https://roi.tabutility.com/" />
-  <meta property="og:title" content="ROI Calculator — Return on Investment" />
-  <meta property="og:description" content="Calculate ROI, annualised return and profit for any investment instantly." />
+  <title>401k Calculator 2026 — Contribution & Growth | Tabutility</title>
+  <meta name="description" content="Calculate 401k contributions, employer match, tax savings and projected balance at retirement. 2026 contribution limits included." />
+  <meta name="keywords" content="401k calculator 2026, 401k contribution limit, employer match calculator, 401k growth calculator, retirement savings" />
+  <link rel="canonical" href="https://us-401k.tabutility.com/" />
+  <meta property="og:title" content="401k Calculator 2026" />
+  <meta property="og:description" content="Calculate 401k contributions, employer match, tax savings and retirement balance." />
   <meta property="og:type" content="website" />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>" />
   <meta name="robots" content="index, follow" />
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7039091592734005" crossorigin="anonymous"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-78VZWJ5B1W"></script>
@@ -24,25 +24,39 @@
 <script type="text/babel">
 //<![CDATA[
 const { useState } = React;
-function fmt(n){return '$'+Math.abs(Math.round(n)).toLocaleString();}
-function fmtPct(n){return (n>=0?'+':'')+n.toFixed(2)+'%';}
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
 
 function App() {
-  const [initial, setInitial] = useState(10000);
-  const [final, setFinal] = useState(14500);
-  const [years, setYears] = useState(3);
-  const [fees, setFees] = useState(0);
+  const [salary, setSalary] = useState(85000);
+  const [contribPct, setContrib] = useState(10);
+  const [matchPct, setMatch] = useState(3);
+  const [matchLimit, setMatchLimit] = useState(3);
+  const [taxRate, setTaxRate] = useState(22);
+  const [years, setYears] = useState(25);
+  const [returnRate, setReturn] = useState(7);
+  const [current, setCurrent] = useState(15000);
+  const [age, setAge] = useState(40);
 
-  const inv = Number(initial)||0;
-  const fin = Number(final)||0;
-  const yrs = Number(years)||1;
-  const fee = Number(fees)||0;
+  // 2026 limits
+  const LIMIT_2026 = 23500;
+  const CATCHUP = age >= 50 ? (age >= 60 && age <= 63 ? 11250 : 7500) : 0;
+  const maxContrib = LIMIT_2026 + CATCHUP;
 
-  const netFinal = fin - fee;
-  const profit = netFinal - inv;
-  const roi = inv > 0 ? (profit / inv * 100) : 0;
-  const annualised = inv > 0 && yrs > 0 ? (Math.pow(netFinal/inv, 1/yrs)-1)*100 : 0;
-  const positive = profit >= 0;
+  const s = Number(salary)||0;
+  const pct = Number(contribPct)||0;
+  const yourContrib = Math.min(s * pct / 100, maxContrib);
+  const employerContrib = s * Math.min(pct, Number(matchLimit)) / 100 * Number(matchPct) / Number(matchLimit||1);
+  const totalAnnual = yourContrib + employerContrib;
+  const taxSaved = yourContrib * (Number(taxRate)||0) / 100;
+  const netCostToYou = yourContrib - taxSaved;
+
+  // Growth projection
+  const r = Number(returnRate)||7;
+  const n = Number(years)||25;
+  const pv = Number(current)||0;
+  const fv = pv * Math.pow(1 + r/100, n) + totalAnnual * (Math.pow(1+r/100,n)-1)/(r/100);
+  const totalContributed = pv + totalAnnual * n;
+  const growth = fv - totalContributed;
 
   return (
     <div style={{maxWidth:520,margin:'0 auto',paddingBottom:40}}>
@@ -50,54 +64,84 @@ function App() {
         <a href="https://tabutility.com" style={{color:'#a5b4fc',textDecoration:'none',fontSize:14}}>← All Tools</a>
         <span style={{color:'#fff',fontWeight:700,fontSize:15}}>⚡ Tabutility</span>
       </div>
-      <div style={{background:'linear-gradient(135deg,#0891b2,#0e7490)',padding:'28px 20px',textAlign:'center',color:'#fff'}}>
-        <div style={{fontSize:36,marginBottom:8}}>📈</div>
-        <h1 style={{margin:'0 0 6px',fontSize:22,fontWeight:900}}>ROI Calculator</h1>
-        <p style={{margin:0,fontSize:13,opacity:0.85}}>Return on investment · annualised return · profit/loss</p>
+      <div style={{background:'linear-gradient(135deg,#1e40af,#1e3a8a)',padding:'28px 20px',textAlign:'center',color:'#fff'}}>
+        <div style={{fontSize:36,marginBottom:8}}>🏦</div>
+        <h1 style={{margin:'0 0 6px',fontSize:22,fontWeight:900}}>401(k) Calculator 2026</h1>
+        <p style={{margin:0,fontSize:13,opacity:0.85}}>Contributions · employer match · tax savings · growth</p>
       </div>
       <div style={{padding:20}}>
         <div style={{background:'#fff',borderRadius:14,padding:20,boxShadow:'0 2px 12px rgba(0,0,0,0.06)',marginBottom:16}}>
-          {[['Initial Investment','$',initial,setInitial],['Final Value','$',final,setFinal],['Fees / Costs','$',fees,setFees]].map(([label,prefix,val,setter])=>(
-            <div key={label} style={{marginBottom:14}}>
-              <label style={{fontSize:13,fontWeight:600,color:'#374151',display:'block',marginBottom:6}}>{label}</label>
-              <div style={{position:'relative'}}>
-                <span style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'#6b7280'}}>{prefix}</span>
-                <input type="number" value={val} onChange={e=>setter(e.target.value)}
-                  style={{width:'100%',padding:'11px 12px 11px 28px',borderRadius:10,border:'2px solid #e5e7eb',fontSize:16,boxSizing:'border-box'}} />
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+            {[
+              ['Annual Salary','$',salary,setSalary],
+              ['Your Age','yrs',age,setAge],
+              ['Current Balance','$',current,setCurrent],
+              ['Years to Retire','yrs',years,setYears],
+            ].map(([l,p,v,s])=>(
+              <div key={l}>
+                <label style={{fontSize:12,fontWeight:600,color:'#374151',display:'block',marginBottom:5}}>{l}</label>
+                <div style={{position:'relative'}}>
+                  <span style={{position:'absolute',left:8,top:'50%',transform:'translateY(-50%)',color:'#9ca3af',fontSize:12}}>{p}</span>
+                  <input type="number" value={v} onChange={e=>s(e.target.value)}
+                    style={{width:'100%',padding:'9px 8px 9px 24px',borderRadius:10,border:'2px solid #e5e7eb',fontSize:14,boxSizing:'border-box'}} />
+                </div>
               </div>
+            ))}
+          </div>
+          <div style={{marginTop:14}}>
+            <label style={{fontSize:13,fontWeight:600,color:'#374151',display:'block',marginBottom:6}}>Your Contribution: <span style={{color:'#1e40af'}}>{contribPct}%</span></label>
+            <input type="range" min={1} max={100} step={1} value={contribPct} onChange={e=>setContrib(e.target.value)} style={{width:'100%',accentColor:'#1e40af'}} />
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginTop:12}}>
+            <div>
+              <label style={{fontSize:12,fontWeight:600,color:'#374151',display:'block',marginBottom:5}}>Employer Match %</label>
+              <input type="number" value={matchPct} onChange={e=>setMatch(e.target.value)}
+                style={{width:'100%',padding:'9px 12px',borderRadius:10,border:'2px solid #e5e7eb',fontSize:14,boxSizing:'border-box'}} />
             </div>
-          ))}
-          <div>
-            <label style={{fontSize:13,fontWeight:600,color:'#374151',display:'block',marginBottom:6}}>Investment Period (years)</label>
-            <input type="number" value={years} onChange={e=>setYears(e.target.value)} min={0.1} step={0.5}
-              style={{width:'100%',padding:'11px 12px',borderRadius:10,border:'2px solid #e5e7eb',fontSize:16,boxSizing:'border-box'}} />
+            <div>
+              <label style={{fontSize:12,fontWeight:600,color:'#374151',display:'block',marginBottom:5}}>Up to % of Salary</label>
+              <input type="number" value={matchLimit} onChange={e=>setMatchLimit(e.target.value)}
+                style={{width:'100%',padding:'9px 12px',borderRadius:10,border:'2px solid #e5e7eb',fontSize:14,boxSizing:'border-box'}} />
+            </div>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginTop:12}}>
+            <div>
+              <label style={{fontSize:12,fontWeight:600,color:'#374151',display:'block',marginBottom:5}}>Tax Rate %</label>
+              <input type="number" value={taxRate} onChange={e=>setTaxRate(e.target.value)}
+                style={{width:'100%',padding:'9px 12px',borderRadius:10,border:'2px solid #e5e7eb',fontSize:14,boxSizing:'border-box'}} />
+            </div>
+            <div>
+              <label style={{fontSize:12,fontWeight:600,color:'#374151',display:'block',marginBottom:5}}>Annual Return %</label>
+              <input type="number" value={returnRate} onChange={e=>setReturn(e.target.value)}
+                style={{width:'100%',padding:'9px 12px',borderRadius:10,border:'2px solid #e5e7eb',fontSize:14,boxSizing:'border-box'}} />
+            </div>
           </div>
         </div>
 
-        <div style={{background: positive?'#f0fdf4':'#fef2f2',borderRadius:14,padding:24,textAlign:'center',marginBottom:16,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
-          <div style={{fontSize:13,fontWeight:600,color:'#6b7280',marginBottom:4}}>TOTAL ROI</div>
-          <div style={{fontSize:52,fontWeight:900,color: positive?'#059669':'#dc2626'}}>{fmtPct(roi)}</div>
-          <div style={{fontSize:15,color: positive?'#059669':'#dc2626',fontWeight:700}}>{positive?'+':''}{fmt(profit)} {positive?'profit':'loss'}</div>
+        <div style={{background:'linear-gradient(135deg,#eff6ff,#dbeafe)',borderRadius:14,padding:24,textAlign:'center',marginBottom:16}}>
+          <div style={{fontSize:13,fontWeight:700,color:'#1e3a8a'}}>PROJECTED BALANCE</div>
+          <div style={{fontSize:44,fontWeight:900,color:'#1e40af',margin:'6px 0'}}>{fmt(fv)}</div>
+          <div style={{fontSize:13,color:'#3b82f6'}}>in {years} years · {fmt(growth)} investment growth</div>
         </div>
 
         <div style={{background:'#fff',borderRadius:14,padding:20,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
           {[
-            ['Initial Investment', fmt(inv)],
-            ['Final Value (before fees)', fmt(fin)],
-            ['Fees / Transaction Costs', fee > 0 ? '-'+fmt(fee) : '$0'],
-            ['Net Final Value', fmt(netFinal)],
-            ['Net Profit / Loss', (positive?'+':'-')+fmt(profit)],
-            ['Total ROI', fmtPct(roi)],
-            ['Annualised Return (CAGR)', fmtPct(annualised)+' / yr'],
+            ['2026 Contribution Limit', fmt(maxContrib)+(CATCHUP>0?' (incl. '+fmt(CATCHUP)+' catch-up)':'')],
+            ['Your Annual Contribution', fmt(yourContrib)],
+            ['Employer Annual Match', fmt(employerContrib)],
+            ['Total Annual Contribution', fmt(totalAnnual)],
+            ['Annual Tax Savings', fmt(taxSaved)],
+            ['Net Cost to You', fmt(netCostToYou)+' / year'],
+            ['Current Balance', fmt(pv)],
+            ['Projected Balance', fmt(fv)],
           ].map(([l,v])=>(
             <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'9px 0',borderBottom:'1px solid #f0f0f0',fontSize:14}}>
-              <span style={{color:'#6b7280'}}>{l}</span>
-              <strong style={{color: l.includes('Loss')||l.includes('Fees')&&fee>0?'#dc2626':l.includes('ROI')||l.includes('Profit')||l.includes('CAGR')?positive?'#059669':'#dc2626':'#1a1a2e'}}>{v}</strong>
+              <span style={{color:'#6b7280'}}>{l}</span><strong style={{color:l.includes('Projected')?'#1e40af':l.includes('Savings')?'#16a34a':'#1a1a2e'}}>{v}</strong>
             </div>
           ))}
         </div>
-        <div style={{background:'#ecfeff',borderRadius:12,padding:16,marginTop:16,fontSize:13,color:'#0e7490',lineHeight:1.6}}>
-          <strong>CAGR</strong> (Compound Annual Growth Rate) is the annualised ROI — useful when comparing investments held for different time periods.
+        <div style={{background:'#eff6ff',borderRadius:12,padding:16,marginTop:16,fontSize:13,color:'#1e3a8a',lineHeight:1.6}}>
+          <strong>2026 limits:</strong> $23,500 standard; +$7,500 catch-up if age 50–59 or 64+; +$11,250 if age 60–63 (SECURE 2.0). Always contribute enough to get the full employer match — it's an instant 100% return.
         </div>
       </div>
     </div>
